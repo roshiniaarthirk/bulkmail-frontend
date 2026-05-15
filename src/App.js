@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState } from "react";
+import * as XLSX from "xlsx";
 
 function App() {
 
@@ -7,14 +8,31 @@ function App() {
   const [total, setTotal] = useState(0);
 
   const handleFile = (e) => {
+
     const file = e.target.files[0];
 
-    if (file) {
+    if (!file) return;
 
-      // dummy count
-      setTotal(50);
+    const reader = new FileReader();
 
-    }
+    reader.onload = (evt) => {
+
+      const data = evt.target.result;
+
+      const workbook = XLSX.read(data, { type: "binary" });
+
+      const sheetName = workbook.SheetNames[0];
+
+      const sheet = workbook.Sheets[sheetName];
+
+      const excelData = XLSX.utils.sheet_to_json(sheet);
+
+      setTotal(excelData.length);
+
+    };
+
+    reader.readAsBinaryString(file);
+
   };
 
   const handleSend = () => {
@@ -22,8 +40,11 @@ function App() {
     setLoading(true);
 
     setTimeout(() => {
+
       setLoading(false);
+
       alert("Emails Sent Successfully");
+
     }, 3000);
 
   };
@@ -50,7 +71,11 @@ function App() {
       ></textarea>
 
       <div className="filebox">
-        <input type="file" onChange={handleFile} />
+        <input
+          type="file"
+          accept=".xlsx,.xls"
+          onChange={handleFile}
+        />
       </div>
 
       <h2>Total Emails in the file : {total}</h2>
