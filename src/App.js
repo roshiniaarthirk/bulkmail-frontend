@@ -1,9 +1,36 @@
 import "./App.css";
+import { useState } from "react";
 
 function App() {
+
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  const handleFile = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+
+      // dummy count
+      setTotal(50);
+
+    }
+  };
+
+  const handleSend = () => {
+
+    setLoading(true);
+
+    setTimeout(() => {
+      setLoading(false);
+      alert("Emails Sent Successfully");
+    }, 3000);
+
+  };
+
   return (
     <div className="container">
-      
+
       <div className="header">
         <h1>Bulkmail</h1>
       </div>
@@ -23,12 +50,14 @@ function App() {
       ></textarea>
 
       <div className="filebox">
-        <input type="file" />
+        <input type="file" onChange={handleFile} />
       </div>
 
-      <h2>Total Emails in the file : 0</h2>
+      <h2>Total Emails in the file : {total}</h2>
 
-      <button>Send</button>
+      <button onClick={handleSend}>
+        {loading ? "Sending..." : "Send"}
+      </button>
 
     </div>
   );
